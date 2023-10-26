@@ -11,8 +11,10 @@ class MyAccountManager(BaseUserManager):
             password = password,
         )
         user.role=role
+        user.is_active = True
         user.set_password(password)
         user.save(using=self._db)
+        
         return user
 
     def create_admin(self,  username,email=None,role="OTHERS", password=None):
