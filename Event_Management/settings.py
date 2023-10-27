@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "api",
     "accounts",
     'django_filters',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'events_tickets'
 ]
 
 MIDDLEWARE = [
