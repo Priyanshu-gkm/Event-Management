@@ -9,9 +9,8 @@ from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPI
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+
 
 class AccountLCAPIView(ListCreateAPIView):
     queryset = Account.objects.all()
