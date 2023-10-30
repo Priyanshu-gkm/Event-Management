@@ -12,21 +12,19 @@ class MyAccountManager(BaseUserManager):
         )
         user.role=role
         user.is_active = True
+        
+        if role=="ORGANIZER":
+            user.is_staff=True
+        
+        if role=="ADMIN":
+            user.is_staff=True
+            user.is_admin=True
+
         user.set_password(password)
         user.save(using=self._db)
         
         return user
 
-    def create_admin(self,  username,email=None,role="OTHERS", password=None):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            password = password,
-            username = username,
-            role="ADMIN"
-        )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
 
     def create_superuser(self, username,email=None,role="OTHERS", password=None):
         user = self.create_user(
@@ -37,17 +35,6 @@ class MyAccountManager(BaseUserManager):
         )
         user.is_staff = True
         user.is_superuser = True
-        user.save(using=self._db)
-        return user
-    
-    def create_organizer(self,username,email=None,role="OTHERS",password=None):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            password = password,
-            username = username,
-            role="ORGANIZER"
-        )
-        user.is_staff = True
-        user.is_superuser = True
+        user.is_admin=True
         user.save(using=self._db)
         return user
