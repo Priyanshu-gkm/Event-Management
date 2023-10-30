@@ -26,6 +26,18 @@ class AccountRUDAPIView(RetrieveUpdateDestroyAPIView):
     filterset_fields = ['username']
     
     
+    def delete(self,request,pk,*args,**kwargs):
+        print(pk)
+        try:
+            user = Account.objects.get(id=pk)
+            user.is_active = False
+            user.save()
+            return Response({"message":"account Deleted successfully"},status=status.HTTP_204_NO_CONTENT)
+        
+        except:
+            return Response({"error":"No account found"},status=status.HTTP_404_NOT_FOUND)
+    
+    
 
 class LoginView(APIView):
     def post(self,request):
