@@ -4,9 +4,9 @@ from Event_Management.settings import AUTH_USER_MODEL
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-class TicketTypes(models.Model):
+class TicketType(models.Model):
     name = models.CharField(max_length=20,null=False,blank=False)
-    created_by = models.ForeignKey(AUTH_USER_MODEL,on_delete=models.CASCADE)
+    # created_by = models.ForeignKey(AUTH_USER_MODEL,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True,verbose_name="active")
     
     def delete(self, *args, **kwargs):
@@ -32,11 +32,11 @@ class Event(models.Model):
         self.save()
         
 
-class EventTicketTypes(models.Model):
+class EventTicketType(models.Model):
     event = models.ForeignKey(Event,verbose_name="event",on_delete=models.CASCADE)
-    ticket_type = models.ForeignKey(TicketTypes,verbose_name="ticket",on_delete=models.CASCADE)
+    ticket_type = models.ForeignKey(TicketType,verbose_name="ticket",on_delete=models.CASCADE)
     price = models.DecimalField(verbose_name="price",max_digits=7,decimal_places=2)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     is_active = models.BooleanField(default=True,verbose_name="active")
     
 
@@ -44,19 +44,19 @@ class EventTicketTypes(models.Model):
 def update_event_ticket_types(sender, instance, **kwargs):
     if not instance.is_active:
         # When the Event is declared inactive, set related EventTicketType instances to inactive
-        EventTicketTypes.objects.filter(event=instance).update(is_active=False)
+        EventTicketType.objects.filter(event=instance).update(is_active=False)
     
     
     
 class Photo(models.Model):
     event = models.ForeignKey(Event, related_name='event_img',on_delete=models.CASCADE)
-    image = models.TextField()
+    image = models.URLField("url",unique=True,null=False)
     
     
 class Ticket(models.Model):
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event,on_delete=models.CASCADE)
     customer = models.ForeignKey(AUTH_USER_MODEL,on_delete=models.CASCADE)
-    ticket_type = models.ForeignKey(TicketTypes,verbose_name="ticket")
+    ticket_type = models.ForeignKey(TicketType,verbose_name="ticket",on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=7,decimal_places=2)
     is_active = models.BooleanField(default=True,verbose_name="active")
         
