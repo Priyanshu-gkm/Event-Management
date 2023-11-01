@@ -1,10 +1,6 @@
-from typing import Any
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import BaseUserManager
 
 class MyAccountManager(BaseUserManager):
-
-    def create(self, **kwargs: Any) -> Any:
-        return super().create(**kwargs)
 
     def create_user(self, username,email=None,role="OTHERS", password=None,**kwargs):
         if not username:
