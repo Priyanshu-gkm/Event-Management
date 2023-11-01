@@ -9,6 +9,8 @@ from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPI
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.backends import ModelBackend
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -47,18 +49,16 @@ class LoginView(APIView):
             user = None
             try:
                 user = Account.objects.get(username=username)
-            except ObjectDoesNotExist:
-                pass
-
-            if not user:
-                user = authenticate(username=username, password=password)
+            except:
+                return Response({"Error":"User does not exist with this username"},status=status.HTTP_400_BAD_REQUEST)
+            user = authenticate(username=username, password=password)
 
             if user:
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'token': token.key,
-                                 'user_id': user.pk,
-                                 'email': user.email
-                                 }
+                                'user_id': user.pk,
+                                'email': user.email
+                                }
                                 , status=status.HTTP_200_OK)
 
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

@@ -1,15 +1,22 @@
-from django.contrib.auth.models import BaseUserManager
+from typing import Any
+from django.contrib.auth.base_user import BaseUserManager
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, username,email=None,role="OTHERS", password=None):
+
+    def create(self, **kwargs: Any) -> Any:
+        return super().create(**kwargs)
+
+    def create_user(self, username,email=None,role="OTHERS", password=None,**kwargs):
         if not username:
             return ValueError("Users must have a username")
 
         user = self.model(
-            email=self.normalize_email(email).lower(),
-            username=username,
+            email = self.normalize_email(email).lower(),
+            username = username,
             password = password,
+            **kwargs
         )
+        
         user.role=role
         user.is_active = True
         
@@ -26,12 +33,13 @@ class MyAccountManager(BaseUserManager):
         return user
 
 
-    def create_superuser(self, username,email=None,role="OTHERS", password=None):
+    def create_superuser(self, username,email=None,role="OTHERS", password=None,**kwargs):
         user = self.create_user(
             email=self.normalize_email(email),
             password = password,
             username = username,
-            role=role
+            role=role,
+            **kwargs
         )
         user.is_staff = True
         user.is_superuser = True
