@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Photo,Event,EventTicketType,Ticket,TicketType
+from events_tickets.custom_validators import validate_date_greater_than_today
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +26,7 @@ class EventTicketTypesSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    date =serializers.DateField(validators=[validate_date_greater_than_today])
     photos = serializers.SerializerMethodField()
     tickets = serializers.SerializerMethodField()
     
@@ -38,6 +40,7 @@ class EventSerializer(serializers.ModelSerializer):
         return obj
 
 
+        
     class Meta:
         model = Event
         fields = ['id','name','date','time','location','description','photos','created_by','is_active','tickets']
@@ -59,18 +62,37 @@ class EventSerializer(serializers.ModelSerializer):
             
             
     def save(self, **kwargs):
-        request = self.context.get('request')
-        photo_data=request.data['images']
-        tickets_data=request.data['tickets']
-        event_data = request.data
-        del event_data['images']
-        del event_data['tickets']
-        instance_obj =  super().save(**kwargs)
-        try:
-            self.save_photos(photo_data,instance_obj.id)
-            self.create_event_tickets(tickets_data,instance_obj.id)
-        except Exception as e:
-            raise e
+        if self.instance:
+            # If the instance exists, update the fields with the validated data
+            for attr, value in self.validated_data.items():
+                setattr(self.instance, attr, value)
+            self.instance.save()
+            
+        else:
+            request = self.context.get('request')
+            photo_data=request.data['photos']
+            tickets_data=request.data['tickets']
+            event_data = request.data
+            del event_data['photos']
+            del event_data['tickets']
+            instance_obj =  super().save(**kwargs)
+            try:
+                self.save_photos(photo_data,instance_obj.id)
+                self.create_event_tickets(tickets_data,instance_obj.id)
+                
+            except Exception as e:
+                raise e
+            
+        
+    def to_representation(self, obj):
+        ret = super(EventSerializer, self).to_representation(obj)
+        viewer_id = self.context.get("request").__dict__['parser_context']['request'].user.id
+        if viewer_id==obj.created_by.id:
+            ret.pop("created_by")
+        if ret['is_active']==False:
+            ret.pop("tickets")
+        return ret 
+    
     
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
@@ -86,5 +108,3 @@ class TicketTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketType
         fields=['id','name','is_active']
-        
-    

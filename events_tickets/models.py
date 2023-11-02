@@ -1,23 +1,20 @@
 from django.db import models
 from events_tickets.custom_validators import validate_date_greater_than_today
 from Event_Management.settings import AUTH_USER_MODEL
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
+
 
 class TicketType(models.Model):
     name = models.CharField(max_length=20,null=False,blank=False)
-    # created_by = models.ForeignKey(AUTH_USER_MODEL,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True,verbose_name="active")
     
     def delete(self, *args, **kwargs):
-        # Custom delete logic
         self.is_active=False
         self.save()
     
 
 class Event(models.Model):
     name = models.CharField(verbose_name="name",max_length=100)
-    date = models.DateField(verbose_name="date",blank=False,null=False,validators=[validate_date_greater_than_today])
+    date = models.DateField(verbose_name="date",blank=False,null=False)
     time = models.TimeField(verbose_name="time",blank=False,null=False)
     location = models.CharField(verbose_name="location",blank=False,null=False,max_length=255)
     description = models.TextField(verbose_name="description")
@@ -27,7 +24,6 @@ class Event(models.Model):
     is_active = models.BooleanField(default=True,verbose_name="active")
     
     def delete(self, *args, **kwargs):
-        # Custom delete logic
         self.is_active=False
         self.save()
         
@@ -39,12 +35,10 @@ class EventTicketType(models.Model):
     quantity = models.PositiveIntegerField()
     is_active = models.BooleanField(default=True,verbose_name="active")
     
-
-@receiver(post_delete, sender=Event)
-def update_event_ticket_types(sender, instance, **kwargs):
-    if not instance.is_active:
-        # When the Event is declared inactive, set related EventTicketType instances to inactive
-        EventTicketType.objects.filter(event=instance).update(is_active=False)
+    
+    def delete(self, *args, **kwargs):
+        self.is_active=False
+        self.save()
     
     
     
@@ -59,11 +53,7 @@ class Ticket(models.Model):
     ticket_type = models.ForeignKey(TicketType,verbose_name="ticket",on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=7,decimal_places=2)
     is_active = models.BooleanField(default=True,verbose_name="active")
-        
-        
-@receiver(post_delete, sender=Event)
-def update_ticket(sender, instance, **kwargs):
-    if not instance.is_active:
-        # When the Event is declared inactive, set related EventTicketType instances to inactive
-        Ticket.objects.filter(event=instance).update(is_active=False)
     
+    def delete(self, *args, **kwargs):
+        self.is_active=False
+        self.save()
