@@ -13,7 +13,7 @@ class TicketType(models.Model):
     
 
 class Event(models.Model):
-    name = models.CharField(verbose_name="name",max_length=100)
+    name = models.CharField(verbose_name="name",blank=False,null=False,max_length=100)
     date = models.DateField(verbose_name="date",blank=False,null=False)
     time = models.TimeField(verbose_name="time",blank=False,null=False)
     location = models.CharField(verbose_name="location",blank=False,null=False,max_length=255)
@@ -44,7 +44,7 @@ class EventTicketType(models.Model):
     
 class Photo(models.Model):
     event = models.ForeignKey(Event, related_name='event_img',on_delete=models.CASCADE)
-    image = models.URLField("url",unique=True,null=False)
+    image = models.URLField("url",null=False)
     
     
 class Ticket(models.Model):
