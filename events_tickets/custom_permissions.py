@@ -3,9 +3,9 @@ from rest_framework import permissions
 class IsOrganizer(permissions.BasePermission):
     def has_permission(self, request, view):
         # Check if the user has a 'organizer' role
-
-        return bool(request.user and request.user.role == 'ORGANIZER')
+        return bool(request.user.is_authenticated and request.user.role == 'ORGANIZER')
     
-class isAttendee(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.role=="ATTENDEE")
+    
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return bool(request.user.is_authenticated and obj.created_by.id == request.user.id)

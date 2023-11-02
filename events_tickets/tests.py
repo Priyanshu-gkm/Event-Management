@@ -1,6 +1,6 @@
 from django.test import TestCase , Client
 from django.urls import reverse
-from events_tickets.models import Event,EventTicketTypes,Ticket,TicketTypes,Photo
+from events_tickets.models import Event,EventTicketType,Ticket,TicketTypew,Photo
 # Create your tests here.
 
 
