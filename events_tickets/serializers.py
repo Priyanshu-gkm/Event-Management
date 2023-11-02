@@ -13,13 +13,13 @@ class PhotoSerializer(serializers.ModelSerializer):
             ret.pop('event')
         return ret 
     
-class EventTicketTypesSerializer(serializers.ModelSerializer):
+class EventTicketTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTicketType
         fields=['id','event','ticket_type','price','quantity','is_active']
         
     def to_representation(self, obj):
-        ret = super(EventTicketTypesSerializer, self).to_representation(obj)
+        ret = super(EventTicketTypeSerializer, self).to_representation(obj)
         if self.context.get("from")=="get_tickets":
             ret.pop('event')
         return ret 
@@ -32,7 +32,7 @@ class EventSerializer(serializers.ModelSerializer):
     
     def get_tickets(self,obj):
         tickets = EventTicketType.objects.filter(event=obj)
-        return EventTicketTypesSerializer(tickets,many=True,read_only=True,context={"from":"get_tickets"}).data
+        return EventTicketTypeSerializer(tickets,many=True,read_only=True,context={"from":"get_tickets"}).data
 
     def get_photos(self, obj):
         photos = Photo.objects.filter(event=obj)
@@ -56,7 +56,7 @@ class EventSerializer(serializers.ModelSerializer):
     def create_event_tickets(self,tickets_data,event_id):
         for i in tickets_data:
             i['event'] = event_id
-        serializer = EventTicketTypesSerializer(data=tickets_data,many=True)
+        serializer = EventTicketTypeSerializer(data=tickets_data,many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
             
@@ -104,7 +104,7 @@ class TicketSerializer(serializers.ModelSerializer):
         instance.save()
  
         
-class TicketTypesSerializer(serializers.ModelSerializer):
+class TicketTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketType
         fields=['id','name','is_active']

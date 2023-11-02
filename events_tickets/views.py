@@ -4,20 +4,20 @@ from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPI
 from rest_framework.permissions import  IsAdminUser , AllowAny
 
 from events_tickets.models import EventTicketType,Event,Photo,Ticket,TicketType
-from events_tickets.serializers import EventSerializer,TicketSerializer,PhotoSerializer,TicketTypesSerializer,EventTicketTypesSerializer
+from events_tickets.serializers import EventSerializer,TicketSerializer,PhotoSerializer,TicketTypeSerializer,EventTicketTypeSerializer
 from events_tickets.custom_permissions import IsOrganizer , IsOwner
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 
 class TicketTypeLC(ListCreateAPIView):
-    serializer_class = TicketTypesSerializer
+    serializer_class = TicketTypeSerializer
     queryset = TicketType.objects.all()
     permission_classes = [IsAdminUser | IsOrganizer]
     
     
 class TicketTypeRUD(RetrieveUpdateDestroyAPIView):
-    serializer_class = TicketTypesSerializer
+    serializer_class = TicketTypeSerializer
     queryset = TicketType.objects.all()
     permission_classes = [IsAdminUser]
     
@@ -50,3 +50,12 @@ class EventRUD(RetrieveUpdateDestroyAPIView):
     queryset=Event.objects.all()
     serializer_class = EventSerializer
     permission_classes=[IsAdminUser | IsOwner]
+    
+class TicketLC(ListCreateAPIView):
+    serializer_class = TicketSerializer
+    queryset = TicketType.objects.all()
+    
+    
+class TicketRUD(RetrieveUpdateDestroyAPIView):
+    serializer_class = TicketSerializer
+    queryset = TicketType.objects.all()
