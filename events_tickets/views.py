@@ -53,9 +53,9 @@ class EventRUD(RetrieveUpdateDestroyAPIView):
     
 class TicketLC(ListCreateAPIView):
     serializer_class = TicketSerializer
-    queryset = TicketType.objects.all()
+    queryset = Ticket.objects.all()
     
     
 class TicketRUD(RetrieveUpdateDestroyAPIView):
     serializer_class = TicketSerializer
-    queryset = TicketType.objects.all()
+    queryset = Ticket.objects.all()

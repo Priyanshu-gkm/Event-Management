@@ -1,5 +1,4 @@
 from django.db import models
-from events_tickets.custom_validators import validate_date_greater_than_today
 from Event_Management.settings import AUTH_USER_MODEL
 
 
@@ -53,7 +52,8 @@ class Ticket(models.Model):
     ticket_type = models.ForeignKey(TicketType,verbose_name="ticket",on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=7,decimal_places=2)
     is_active = models.BooleanField(default=True,verbose_name="active")
+    archive = models.BooleanField(default=False,verbose_name="archive")
     
     def delete(self, *args, **kwargs):
-        self.is_active=False
+        self.archive=True
         self.save()
