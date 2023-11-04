@@ -98,10 +98,7 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = '__all__'
-        
-    def delete(self, instance):
-        instance.is_active=False
-        instance.save()
+    
  
         
 class TicketTypeSerializer(serializers.ModelSerializer):
