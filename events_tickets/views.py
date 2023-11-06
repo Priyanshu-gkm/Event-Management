@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView , UpdateAPIView
+from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView , UpdateAPIView , DestroyAPIView
 from rest_framework.permissions import  AllowAny , IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
-from events_tickets.models import Event,Ticket,TicketType
-from events_tickets.serializers import EventSerializer,TicketSerializer,TicketTypeSerializer,TicketDataSerializer
+from events_tickets.models import Event,Ticket,TicketType,Wishlist
+from events_tickets.serializers import EventSerializer,TicketSerializer,TicketTypeSerializer,TicketDataSerializer , WishlistSerializer
 from events_tickets.custom_permissions import IsOrganizer , IsEventOwner , IsAdminUser , IsTicketOwner , IsTicketEventOwner
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -108,3 +108,31 @@ class TicketRUD(RetrieveUpdateDestroyAPIView):
             perms = IsAdminUser | IsTicketOwner | IsTicketEventOwner
             return [perms()]
         return super().get_permissions()
+    
+class WishlistLCView(ListCreateAPIView):
+    serializer_class = WishlistSerializer
+    permission_classes = [IsAuthenticated,IsEventOwner]
+    queryset = Wishlist.objects.all()
+    
+    def get_queryset(self):
+        if self.request.method=="GET":
+            return Wishlist.objects.filter(created_by=self.request.user.id)
+        return super().get_queryset()
+    
+    def get_permissions(self):
+        if self.request.method=="POST":
+            return [IsAuthenticated()]
+        return super().get_permissions()
+    
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        data['created_by'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+class WishlistDeleteView(DestroyAPIView):
+    serializer_class = WishlistSerializer
+    permission_classes = [IsAuthenticated,IsEventOwner]
+    queryset = Wishlist.objects.all()
