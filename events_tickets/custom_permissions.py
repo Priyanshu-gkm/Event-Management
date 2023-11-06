@@ -6,7 +6,7 @@ class IsOrganizer(permissions.BasePermission):
         return bool(request.user.is_authenticated and request.user.role == 'ORGANIZER')
     
     
-class IsOwner(permissions.BasePermission):
+class IsEventOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return bool(request.user.is_authenticated and obj.created_by.id == request.user.id)
     
