@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from events_tickets.models import Event,Ticket,TicketType
 from events_tickets.serializers import EventSerializer,TicketSerializer,TicketTypeSerializer,TicketDataSerializer
-from events_tickets.custom_permissions import IsOrganizer , IsEventOwner , IsAdminUser
+from events_tickets.custom_permissions import IsOrganizer , IsEventOwner , IsAdminUser , IsTicketOwner , IsTicketEventOwner
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -102,3 +102,9 @@ class TicketRUD(RetrieveUpdateDestroyAPIView):
     serializer_class = TicketSerializer
     queryset = Ticket.objects.all()
     permission_classes = [IsAdminUser]
+    
+    def get_permissions(self):
+        if self.request.method == "GET":
+            perms = IsAdminUser | IsTicketOwner | IsTicketEventOwner
+            return [perms()]
+        return super().get_permissions()
