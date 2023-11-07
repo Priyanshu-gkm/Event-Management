@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-v81^xr85afw*@t7cj3*z1pge5oj@e4^cm#2*b7=e+wyah9xnqk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['testserver',"*"]
+ALLOWED_HOSTS = ["testserver", "*"]
 
 
 # Application definition
@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "accounts",
-    'django_filters',
-    'rest_framework.authtoken',
-    'events_tickets',
-    'notify',
-    'django_crontab'
+    "django_filters",
+    "rest_framework.authtoken",
+    "events_tickets",
+    "notify",
+    "django_crontab",
 ]
 
 MIDDLEWARE = [
@@ -97,7 +97,9 @@ DATABASES = {
         "USER": os.environ.get("POSTGRES_USER"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         "HOST": os.environ.get("POSTGRES_HOST"),
-        "PORT": os.environ.get("POSTGRES_PORT"),  # default port you don't need to mention in docker-compose
+        "PORT": os.environ.get(
+            "POSTGRES_PORT"
+        ),  # default port you don't need to mention in docker-compose
     }
 }
 
@@ -143,26 +145,30 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'accounts.Account'
+AUTH_USER_MODEL = "accounts.Account"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
     # Other settings...
 }
 
-#smtp config
+# smtp config
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
-# cronjob 
-CRONTAB_COMMAND_SUFFIX = '2>&1'
+# cronjob
+CRONTAB_COMMAND_SUFFIX = "2>&1"
 CRONJOBS = [
-    ('* * * * * ', 'notify.jobs.send_mail_to_attendees','>> /Users/macbook/Desktop/django.txt')
+    (
+        "* * * * * ",
+        "notify.jobs.send_mail_to_attendees",
+        ">> /Users/macbook/Desktop/django.txt",
+    )
 ]
