@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Event, EventTicketType, Ticket, TicketType , Wishlist
+from .models import Photo, Event, EventTicketType, Ticket, TicketType, Wishlist
 from events_tickets.custom_validators import validate_date_greater_than_today
 
 
@@ -24,6 +24,8 @@ class EventTicketTypeSerializer(serializers.ModelSerializer):
         ret = super(EventTicketTypeSerializer, self).to_representation(obj)
         if self.context.get("from") == "get_tickets":
             ret.pop("event")
+
+        ret["ticket_type"] = TicketType.objects.get(id=ret["ticket_type"]).name
         return ret
 
 
@@ -70,7 +72,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     def create_event_tickets(self, tickets_data, event_id):
         for i in tickets_data:
-            i['event']=event_id
+            i["event"] = event_id
         serializer = EventTicketTypeSerializer(data=tickets_data, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -113,8 +115,7 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = "__all__"
-        
-        
+
     def save(self, **kwargs):
         if self.instance:
             for attr, value in self.validated_data.items():
@@ -123,9 +124,11 @@ class TicketSerializer(serializers.ModelSerializer):
         else:
             request_data = self.validated_data
             try:
-                event_inst = EventTicketType.objects.get(event=request_data['event'],ticket_type=request_data['ticket_type'])
+                event_inst = EventTicketType.objects.get(
+                    event=request_data["event"], ticket_type=request_data["ticket_type"]
+                )
                 quantity = event_inst.quantity
-                event_inst.quantity = quantity-1
+                event_inst.quantity = quantity - 1
                 event_inst.save()
                 super().save(**kwargs)
             except Exception as e:
@@ -150,20 +153,22 @@ class TicketDataSerializer(serializers.Serializer):
         except Event.DoesNotExist as e:
             raise serializers.ValidationError(e)
         if event_inst.is_active == False:
-            raise serializers.ValidationError("Invalid Event",code=400)
+            raise serializers.ValidationError("Invalid Event", code=400)
         return super().validate(attrs)
 
     def validate_tickets(self, attrs):
         request_data = self.context.get("request").data
         event_id = request_data.get("event")
-        
+
         allowed_tickets = list(
             EventTicketType.objects.filter(event=event_id).values(
                 "ticket_type", "quantity"
             )
         )
         if len(allowed_tickets) < 1:
-            raise serializers.ValidationError("No Ticket Available for this event",code=400)
+            raise serializers.ValidationError(
+                "No Ticket Available for this event", code=400
+            )
         requested_tickets = request_data.get("tickets")
         for ticket in requested_tickets:
             try:
@@ -172,14 +177,15 @@ class TicketDataSerializer(serializers.Serializer):
                 )
             except EventTicketType.DoesNotExist as e:
                 raise serializers.ValidationError(e)
-            
+
             if ticket["quantity"] <= obj.quantity:
                 pass
             else:
-                raise serializers.ValidationError(detail=
-                    "{} ticket type {} tickets are not available for event {}".format(
+                raise serializers.ValidationError(
+                    detail="{} ticket type {} tickets are not available for event {}".format(
                         ticket["quantity"], ticket["type"], event_id
-                    ),code=400
+                    ),
+                    code=400,
                 )
         return super().validate(attrs)
 
@@ -192,7 +198,7 @@ class TicketDataSerializer(serializers.Serializer):
             obj = EventTicketType.objects.get(
                 event=event_id, ticket_type=ticket["type"]
             )
-            for i in range(ticket['quantity']):
+            for i in range(ticket["quantity"]):
                 serializer = TicketSerializer(
                     data={
                         "event": event_id,
@@ -204,12 +210,10 @@ class TicketDataSerializer(serializers.Serializer):
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
         return serializer.data
-    
-    
+
+
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = "__all__"
-        extra_kwargs = {
-            'created_by': {'write_only': True}
-        }
+        extra_kwargs = {"created_by": {"write_only": True}}
