@@ -1,6 +1,8 @@
 from rest_framework import serializers
+
+from events.models import EventTicketType, Event
 from tickets.models import Ticket, TicketType
-from events.models import EventTicketType,Event
+
 
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
@@ -101,4 +103,3 @@ class TicketDataSerializer(serializers.Serializer):
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
         return serializer.data
-

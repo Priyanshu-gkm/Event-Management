@@ -1,16 +1,13 @@
 from django.test import TestCase
 from django.urls import reverse
 
-
-from Event_Management.events.models import Event
-from Event_Management.events.model_factory import EventFactory
-from Event_Management.events.serializers import EventSerializer
-from Event_Management.events.setup_data import get_setup_data
-
-from Event_Management.tickets.model_factory import TicketTypeFactory
-from Event_Management.tickets.models import TicketType
-
 from accounts.models import Account
+from events.model_factory import EventFactory
+from events.serializers import EventSerializer
+from events.setup_data import get_setup_data
+from tickets.model_factory import TicketTypeFactory
+from tickets.models import TicketType
+
 
 from faker import Faker
 import random
@@ -23,8 +20,11 @@ class EventChecks(TestCase):
     def setUp(self):
         for k, v in get_setup_data().items():
             setattr(self, k, v)
-        for i in range(3):
-            TicketTypeFactory()
+
+        self.ticket_types = []
+        for iter in range(3):
+            ticket_type = TicketTypeFactory()
+            self.ticket_types.append(ticket_type.id)
 
         tickets = [
             {
@@ -42,6 +42,9 @@ class EventChecks(TestCase):
         self.event_data = factory.build(dict, FACTORY_CLASS=EventFactory)
         self.event_data["tickets"] = tickets
         self.event_data["photos"] = photos
+        self.event_data["created_by"] = random.choice(
+            list(Account.objects.values_list("pk", flat=True))
+        )
 
         self.create_event_data = self.client.post(
             reverse("LC-event"),

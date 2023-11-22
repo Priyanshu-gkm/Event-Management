@@ -1,13 +1,16 @@
+from django.contrib.auth import authenticate
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from accounts.models import Account
-from accounts.serializers import AccountSerializer
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+from accounts.models import Account
+from accounts.serializers import AccountSerializer
 from accounts.custom_permissions import IsAdminUser, IsSameUser
 
 

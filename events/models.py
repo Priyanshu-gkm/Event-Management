@@ -1,4 +1,5 @@
 from django.db import models
+
 from Event_Management.settings import AUTH_USER_MODEL
 from tickets.models import TicketType
 
@@ -40,5 +41,3 @@ class EventTicketType(models.Model):
 class Photo(models.Model):
     event = models.ForeignKey(Event, related_name="event_img", on_delete=models.CASCADE)
     image = models.URLField("url", null=False)
-
-

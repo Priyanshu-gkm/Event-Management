@@ -6,7 +6,7 @@ from tickets.model_factory import TicketTypeFactory, TicketFactory
 from tickets.serializers import TicketTypeSerializer
 
 from events.setup_data import get_setup_data
-from events.models import Event,EventTicketType
+from events.models import Event, EventTicketType
 from events.serializers import EventSerializer
 from events.model_factory import EventFactory
 
@@ -190,6 +190,9 @@ class TicketLCViews(TestCase):
             event_data = factory.build(dict, FACTORY_CLASS=EventFactory)
             event_data["tickets"] = tickets
             event_data["photos"] = photos
+            event_data["created_by"] = random.choice(
+                list(Account.objects.values_list("pk", flat=True))
+            )
             self.client.post(
                 reverse("LC-event"),
                 data=EventSerializer(data=event_data).initial_data,
@@ -337,6 +340,9 @@ class TicketRUDViews(TestCase):
             event_data = factory.build(dict, FACTORY_CLASS=EventFactory)
             event_data["tickets"] = tickets
             event_data["photos"] = photos
+            event_data["created_by"] = random.choice(
+                list(Account.objects.values_list("pk", flat=True))
+            )
             self.client.post(
                 reverse("LC-event"),
                 data=EventSerializer(data=event_data).initial_data,
@@ -431,5 +437,3 @@ class TicketRUDViews(TestCase):
             HTTP_AUTHORIZATION=f"Token {org_token}",
         )
         self.assertEqual(response.status_code, 403)
-
-

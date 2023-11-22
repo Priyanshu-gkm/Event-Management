@@ -1,4 +1,5 @@
 from django.db import models
+
 from Event_Management.settings import AUTH_USER_MODEL
 
 
@@ -24,4 +25,3 @@ class Ticket(models.Model):
     def delete(self, *args, **kwargs):
         self.archive = True
         self.save()
-

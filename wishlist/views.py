@@ -9,13 +9,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from wishlist.models import Wishlist
 from wishlist.serializers import WishlistSerializer
+from wishlist.custom_permissions import IsWishlistItemOwner
 
 
 
 
 class WishlistLCView(ListCreateAPIView):
     serializer_class = WishlistSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsWishlistItemOwner]
     queryset = Wishlist.objects.all()
 
     def get_queryset(self):
@@ -39,5 +40,5 @@ class WishlistLCView(ListCreateAPIView):
 
 class WishlistDeleteView(DestroyAPIView):
     serializer_class = WishlistSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsWishlistItemOwner]
     queryset = Wishlist.objects.all()

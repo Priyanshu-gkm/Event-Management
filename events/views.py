@@ -1,24 +1,16 @@
 from rest_framework import status, filters
 from rest_framework.response import Response
-from rest_framework.generics import (
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
-)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny
 
+from django_filters.rest_framework import DjangoFilterBackend
 
 from events.models import Event
-from events.serializers import (
-    EventSerializer
-)
-from events.custom_permissions import (
-    IsOrganizer,
-    IsEventOwner,
-    IsAdminUser,
-
-)
+from events.serializers import EventSerializer
+from events.custom_permissions import IsEventOwner
 from events.custom_filters import EventFilter
-from django_filters.rest_framework import DjangoFilterBackend
+
+from accounts.custom_permissions import IsAdminUser, IsOrganizer
 
 
 class EventListCreate(ListCreateAPIView):
@@ -54,4 +46,3 @@ class EventRUD(RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [IsAdminUser | IsEventOwner]
-

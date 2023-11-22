@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "accounts",
     "rest_framework.authtoken",
     "events",
-    "wishlist,"
+    "wishlist",
     "tickets",
     "django_filters",
     "django_crontab",
