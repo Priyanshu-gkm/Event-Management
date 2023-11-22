@@ -4,9 +4,8 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView,
-
 )
-from rest_framework.permissions import  IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
 from tickets.models import Ticket, TicketType
@@ -16,7 +15,7 @@ from tickets.serializers import (
     TicketTypeSerializer,
     TicketDataSerializer,
 )
-from events.custom_permissions import (
+from accounts.custom_permissions import (
     IsOrganizer,
     IsAdminUser,
 )
@@ -33,7 +32,6 @@ class TicketTypeRUD(RetrieveUpdateDestroyAPIView):
     serializer_class = TicketTypeSerializer
     queryset = TicketType.objects.all()
     permission_classes = [IsAdminUser]
-
 
 
 class TicketLC(ListCreateAPIView):
@@ -105,5 +103,3 @@ class TicketRUD(RetrieveUpdateDestroyAPIView):
             perms = IsAdminUser | IsTicketOwner | IsTicketEventOwner
             return [perms()]
         return super().get_permissions()
-
-

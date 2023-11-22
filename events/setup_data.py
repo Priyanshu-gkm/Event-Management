@@ -1,7 +1,9 @@
-from accounts.models import Account
-import json, random
 from django.urls import reverse
 from django.test import Client
+
+import json, random
+
+from accounts.models import Account
 
 
 def get_setup_data():

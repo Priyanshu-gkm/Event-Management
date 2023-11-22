@@ -1,8 +1,11 @@
 from django.core.mail import send_mail
-from events_tickets.models import Ticket, Event
-from accounts.models import Account
+
 from datetime import datetime, timedelta
+
 from Event_Management.settings import EMAIL_HOST_USER
+from accounts.models import Account
+from events.models import Event
+from tickets.models import Ticket
 
 
 def send_mail_to_attendees():

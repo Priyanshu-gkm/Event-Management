@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from events.models import Photo, Event , EventTicketType
-from tickets.models import TicketType
+
+from events.models import Photo, Event, EventTicketType
 from events.custom_validators import validate_date_greater_than_today
+
+from tickets.models import TicketType
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -110,4 +112,3 @@ class EventSerializer(serializers.ModelSerializer):
         if ret["is_active"] == False:
             ret.pop("tickets")
         return ret
-

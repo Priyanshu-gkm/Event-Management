@@ -8,6 +8,7 @@ class IsTicketOwner(permissions.BasePermission):
             request.user.is_authenticated and (obj.customer.id == request.user.id)
         )
 
+
 class IsTicketEventOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         event_id = obj.event.id

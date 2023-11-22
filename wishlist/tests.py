@@ -7,20 +7,22 @@ import random
 from accounts.models import Account
 from events.setup_data import get_setup_data
 from events.models import Event
+from events.model_factory import EventFactory
 from wishlist.models import Wishlist
 
 
 fake = Faker()
+
+
 # Create your tests here.
 class WishlistViews(TestCase):
     @classmethod
     def setUpTestData(self):
         for k, v in get_setup_data().items():
             setattr(self, k, v)
-            
         for id in range(1, 4):
             Wishlist.objects.create(
-                created_by=Account.objects.get(id=id), event=Event.objects.get(id=id)
+                created_by=Account.objects.get(id=id), event=EventFactory(created_by=Account.objects.get(id=id))
             )
 
     def test_addItem_fail_login_required(self):
