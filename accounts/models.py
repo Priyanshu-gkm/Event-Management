@@ -22,6 +22,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(
         verbose_name="gender", choices=Gender.choices, max_length=10
     )
+    forget_password_token = models.UUIDField(
+        verbose_name="forget_password_token", default=None, unique=True, null=True
+    )
     date_joined = models.DateTimeField(verbose_name="date_joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last_login", auto_now=True)
     is_admin = models.BooleanField(default=False)
